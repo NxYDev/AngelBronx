@@ -112,7 +112,7 @@ TextLabel.TextWrapped = true
 
 -- Scripts
 
-local function QBBVR_fake_script() -- KeySystemFrame.LocalScript 
+local function JWQHY_fake_script() -- KeySystemFrame.LocalScript 
 	local script = Instance.new('LocalScript', KeySystemFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -155,110 +155,133 @@ local function QBBVR_fake_script() -- KeySystemFrame.LocalScript
 		end
 	end)
 end
-coroutine.wrap(QBBVR_fake_script)()
-local function MQYBMD_fake_script() -- KeySystemFrame.LocalScript 
+coroutine.wrap(JWQHY_fake_script)()
+local function ZUGD_fake_script() -- KeySystemFrame.LocalScript 
 	local script = Instance.new('LocalScript', KeySystemFrame)
 
-	local HttpService = game:GetService("HttpService")
+	-- Services
 	local StarterGui = game:GetService("StarterGui")
-	local KeyBox = script.Parent.KeyFrame.KeyBox
-	local CheckKeyButton = script.Parent.KeyFrame["CheckKey Button"]
-	local DiscordButton = script.Parent.KeyFrame["Discord Button"]
-	local KeySystemFrame = script.Parent
-	local AngelBronx = script.Parent.Parent:FindFirstChild("AngelBronx")
+	local HttpService = game:GetService("HttpService")
 	
-	-- Keys URL
-	local KEYS_URL = "https://raw.githubusercontent.com/solarDev2/Key-System/refs/heads/main/keydiddyweowykeys"
+	-- GUI Elements
+	local StatusLabel = script.Parent.StatusLabel
+	local KeyBox = script.Parent.KeyBox
+	local SubmitButton = script.Parent["CheckKey Button"]
+	local DiscordButton = script.Parent["Discord Button"]
 	
-	-- Cache for keys to avoid multiple HTTP requests
+	-- Key system functionality
 	local validKeys = {}
 	local keysLoaded = false
 	
-	-- Improved key fetching with error handling
-	local function loadKeys()
-		if keysLoaded then return end
+	-- Function to show notifications
+	local function showNotification(title, text, icon, color)
+		StarterGui:SetCore("SendNotification", {
+			Title = title,
+			Text = text,
+			Icon = icon or "",
+			Duration = 5,
+		})
+		if StatusLabel then
+			StatusLabel.Text = text
+			StatusLabel.TextColor3 = color or Color3.fromRGB(255, 255, 255)
+		end
+	end
 	
-		local success, result = pcall(function()
-			local rawKeys = HttpService:GetAsync(KEYS_URL, true)
-			-- Split by lines and trim each line
-			for line in rawKeys:gmatch("[^\r\n]+") do
+	local function loadKeys()
+		showNotification("Key System", "Loading keys...", nil, Color3.fromRGB(255, 255, 255))
+	
+		local success, err = pcall(function()
+			-- Using the GitHub raw URL you provided
+			local response = game:HttpGet("https://raw.githubusercontent.com/solarDev2/Key-System/refs/heads/main/keydiddyweowykeys")
+	
+			-- Split the response by lines
+			for line in response:gmatch("[^\r\n]+") do
 				local cleanKey = line:match("^%s*(.-)%s*$") -- Trim whitespace
 				if #cleanKey > 0 then -- Only add non-empty keys
 					table.insert(validKeys, cleanKey)
 				end
 			end
+	
 			keysLoaded = true
-			print("Successfully loaded", #validKeys, "keys")
+			showNotification("Key System", 
+				"Keys loaded! " .. #validKeys .. " keys available", 
+				nil, 
+				Color3.fromRGB(0, 255, 0))
 		end)
 	
 		if not success then
-			warn("Failed to load keys:", result)
-			-- You could add fallback keys here if needed
-			table.insert(validKeys, "DEFAULT_KEY_123") -- Example fallback
+			showNotification("Key System Error", 
+				"Failed to load keys: " .. err, 
+				nil, 
+				Color3.fromRGB(255, 0, 0))
+			warn("Key System Error: " .. err)
 		end
 	end
 	
-	-- Case-insensitive key check with trimming
-	local function isValidKey(inputKey)
-		if not keysLoaded then loadKeys() end
+	-- Load keys when the GUI is created
+	loadKeys()
 	
-		local userKey = inputKey:match("^%s*(.-)%s*$"):lower() -- Trim and lowercase
+	-- Submit button functionality
+	SubmitButton.MouseButton1Click:Connect(function()
+		if not keysLoaded then
+			showNotification("Key System", 
+				"Keys not loaded yet, please wait...", 
+				nil, 
+				Color3.fromRGB(255, 255, 0))
+			return
+		end
 	
-		for _, validKey in ipairs(validKeys) do
-			if validKey:lower() == userKey then
-				return true
+		local inputKey = KeyBox.Text:match("^%s*(.-)%s*$") -- Trim whitespace
+	
+		if inputKey == "" then
+			showNotification("Key System", 
+				"Please enter a key!", 
+				nil, 
+				Color3.fromRGB(255, 255, 0))
+			return
+		end
+	
+		-- Check if key is valid
+		local isValid = false
+		for _, key in ipairs(validKeys) do
+			if key == inputKey then
+				isValid = true
+				break
 			end
 		end
 	
-		return false
-	end
+		if isValid then
+			showNotification("ACCESS GRANTED", 
+				"Welcome to Angel Bronx!", 
+				"rbxassetid://78000615686315", 
+				Color3.fromRGB(0, 255, 0))
 	
-	-- Notification function
-	local function showSuccessNotification()
-		StarterGui:SetCore("SendNotification", {
-			Title = "ACCESS GRANTED",
-			Text = "Welcome to Angel Bronx!",
-			Icon = "rbxassetid://78000615686315",
-			Duration = 5,
-		})
-	end
-	
-	-- Grant access function
-	local function grantAccess()
-		showSuccessNotification()
-		KeySystemFrame.Visible = false
-		if AngelBronx then
-			AngelBronx.Visible = true
+			-- Here you can put what happens when a valid key is entered
+			-- For example:
+			-- game.Players.LocalPlayer:SetAttribute("KeyVerified", true)
+			-- KeySystemFrame.Visible = false
+			-- AngelBronx.Visible = true
 		else
-			warn("AngelBronx frame not found in parent")
-		end
-	end
-	
-	-- Check Key button
-	CheckKeyButton.MouseButton1Click:Connect(function()
-		local key = KeyBox.Text
-		if isValidKey(key) then
-			grantAccess()
-		else
-			KeyBox.Text = ""
-			KeyBox.PlaceholderText = "Invalid Key! Try Again."
-			-- Optional: Play error sound
+			showNotification("ACCESS DENIED", 
+				"Invalid key! Try again.", 
+				nil, 
+				Color3.fromRGB(255, 0, 0))
 		end
 	end)
 	
-	-- Discord button
-	if DiscordButton then
-		DiscordButton.MouseButton1Click:Connect(function()
-			local discordInvite = "https://discord.gg/yourlink"
-			pcall(function()
-				StarterGui:SetCore("OpenBrowserWindow", {
-					URL = discordInvite
-				})
-			end)
-		end)
-	end
+	-- Discord button functionality
+	DiscordButton.MouseButton1Click:Connect(function()
+		showNotification("Discord", 
+			"Opening Discord invite...", 
+			nil, 
+			Color3.fromRGB(114, 137, 218))
 	
-	-- Load keys when the frame first appears
-	loadKeys()
+		local discordInvite = "https://discord.gg/yourlink" -- Replace with your actual invite
+		pcall(function()
+			StarterGui:SetCore("OpenBrowserWindow", {
+				URL = discordInvite
+			})
+		end)
+	end)
 end
-coroutine.wrap(MQYBMD_fake_script)()
+coroutine.wrap(ZUGD_fake_script)()
