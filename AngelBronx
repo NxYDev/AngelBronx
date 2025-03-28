@@ -1,0 +1,247 @@
+--[[
+
+		Gui2Lua™
+		10zOfficial
+		Version 1.0.0
+
+]]
+
+
+-- Instances
+
+local Angel = Instance.new("ScreenGui")
+local KeySystemFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local KeyFrame = Instance.new("Frame")
+local UICorner_2 = Instance.new("UICorner")
+local CheckKeyButton = Instance.new("TextButton")
+local UICorner_3 = Instance.new("UICorner")
+local DiscordButton = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local KeyBox = Instance.new("TextBox")
+local TextLabel = Instance.new("TextLabel")
+
+-- Properties
+
+Angel.Name = "Angel"
+Angel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+Angel.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+KeySystemFrame.Name = "KeySystemFrame"
+KeySystemFrame.Parent = Angel
+KeySystemFrame.BackgroundColor3 = Color3.new(0.0627451, 0.0627451, 0.0627451)
+KeySystemFrame.BackgroundTransparency = 0.20000000298023224
+KeySystemFrame.BorderColor3 = Color3.new(0, 0, 0)
+KeySystemFrame.BorderSizePixel = 0
+KeySystemFrame.Position = UDim2.new(0.256029695, 0, 0.236577183, 0)
+KeySystemFrame.Size = UDim2.new(0.487012982, 0, 0.525167763, 0)
+
+UICorner.Parent = KeySystemFrame
+
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Parent = KeySystemFrame
+KeyFrame.BackgroundColor3 = Color3.new(0.0627451, 0.0627451, 0.0627451)
+KeyFrame.BackgroundTransparency = 0.20000000298023224
+KeyFrame.BorderColor3 = Color3.new(0, 0, 0)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Position = UDim2.new(0.0176870581, 0, 0.0428146981, 0)
+KeyFrame.Size = UDim2.new(0.962721109, 0, 0.922599018, 0)
+
+UICorner_2.Parent = KeyFrame
+
+CheckKeyButton.Name = "CheckKey Button"
+CheckKeyButton.Parent = KeyFrame
+CheckKeyButton.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+CheckKeyButton.BackgroundTransparency = 0.20000000298023224
+CheckKeyButton.BorderColor3 = Color3.new(0, 0, 0)
+CheckKeyButton.BorderSizePixel = 0
+CheckKeyButton.Position = UDim2.new(0.0613340847, 0, 0.727213562, 0)
+CheckKeyButton.Size = UDim2.new(0.395703763, 0, 0.173146084, 0)
+CheckKeyButton.Font = Enum.Font.SourceSansBold
+CheckKeyButton.Text = "Check Key"
+CheckKeyButton.TextColor3 = Color3.new(0.992157, 0.992157, 0.992157)
+CheckKeyButton.TextSize = 26
+CheckKeyButton.TextWrapped = true
+
+UICorner_3.Parent = CheckKeyButton
+
+DiscordButton.Name = "Discord Button"
+DiscordButton.Parent = KeyFrame
+DiscordButton.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+DiscordButton.BackgroundTransparency = 0.20000000298023224
+DiscordButton.BorderColor3 = Color3.new(0, 0, 0)
+DiscordButton.BorderSizePixel = 0
+DiscordButton.Position = UDim2.new(0.538157105, 0, 0.727213562, 0)
+DiscordButton.Size = UDim2.new(0.395703763, 0, 0.173146084, 0)
+DiscordButton.Font = Enum.Font.SourceSansBold
+DiscordButton.Text = "Join Discord"
+DiscordButton.TextColor3 = Color3.new(0.992157, 0.992157, 0.992157)
+DiscordButton.TextSize = 26
+DiscordButton.TextWrapped = true
+
+UICorner_4.Parent = DiscordButton
+
+KeyBox.Name = "KeyBox"
+KeyBox.Parent = KeyFrame
+KeyBox.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+KeyBox.BorderColor3 = Color3.new(0, 0, 0)
+KeyBox.BorderSizePixel = 0
+KeyBox.Position = UDim2.new(0.156302989, 0, 0.432865202, 0)
+KeyBox.Size = UDim2.new(0.682588995, 0, 0.110813491, 0)
+KeyBox.Font = Enum.Font.SourceSansBold
+KeyBox.PlaceholderText = "'PASTE KEY'"
+KeyBox.Text = "'PASTE KEY'"
+KeyBox.TextColor3 = Color3.new(0.960784, 0.960784, 0.960784)
+KeyBox.TextScaled = true
+KeyBox.TextSize = 14
+KeyBox.TextWrapped = true
+
+TextLabel.Parent = KeyFrame
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 1
+TextLabel.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.241379306, 0, 0.0242404509, 0)
+TextLabel.Size = UDim2.new(0.510457873, 0, 0.218164057, 0)
+TextLabel.Font = Enum.Font.SourceSansBold
+TextLabel.Text = "Angel KeySystem"
+TextLabel.TextColor3 = Color3.new(0.956863, 0.956863, 0.956863)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14
+TextLabel.TextWrapped = true
+
+-- Scripts
+
+local function OZWVIXY_fake_script() -- KeySystemFrame.LocalScript 
+	local script = Instance.new('LocalScript', KeySystemFrame)
+
+	local UserInputService = game:GetService("UserInputService")
+	local frame = script.Parent -- KeySystemFrame
+	local dragToggle = false
+	local dragSpeed = 0.25 -- Adjust as needed
+	local dragStart = nil
+	local startPos = nil
+	
+	-- Function to update the frame position
+	local function updateInput(input)
+		local delta = input.Position - dragStart
+		local newPos = UDim2.new(
+			startPos.X.Scale, 
+			startPos.X.Offset + delta.X, 
+			startPos.Y.Scale, 
+			startPos.Y.Offset + delta.Y
+		)
+		frame.Position = newPos
+	end
+	
+	-- Detect when the mouse button is pressed on the frame
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragToggle = true
+			dragStart = input.Position
+			startPos = frame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragToggle = false
+				end
+			end)
+		end
+	end)
+	
+	-- Update the frame position while dragging
+	UserInputService.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement and dragToggle then
+			updateInput(input)
+		end
+	end)
+end
+coroutine.wrap(OZWVIXY_fake_script)()
+local function CFZGE_fake_script() -- KeySystemFrame.LocalScript 
+	local script = Instance.new('LocalScript', KeySystemFrame)
+
+	local HttpService = game:GetService("HttpService")
+	local StarterGui = game:GetService("StarterGui")
+	local KeyBox = script.Parent.KeyFrame.KeyBox
+	local CheckKeyButton = script.Parent.KeyFrame["CheckKey Button"] -- Fixed name
+	local DiscordButton = script.Parent.KeyFrame["Discord Button"] -- Fixed name
+	local KeySystemFrame = script.Parent
+	local AngelBronx = script.Parent.Parent:FindFirstChild("AngelBronx")
+	
+	-- Keys URL
+	local KEYS_URL = "https://raw.githubusercontent.com/solarDev2/Key-System/refs/heads/main/keydiddyweowykeys"
+	
+	-- Fetch keys from GitHub
+	local function fetchKeys()
+		local success, keys = pcall(function()
+			return HttpService:GetAsync(KEYS_URL, true)
+		end)
+	
+		if success then
+			local keyList = {}
+			for line in keys:gmatch("[^\r\n]+") do
+				table.insert(keyList, line:gsub("%s+", ""))
+			end
+			return keyList
+		else
+			warn("Failed to fetch keys: " .. keys)
+			return {}
+		end
+	end
+	
+	-- Check if the entered key is valid
+	local function isValidKey(inputKey)
+		local keys = fetchKeys()
+		for _, key in pairs(keys) do
+			if key == inputKey then
+				return true
+			end
+		end
+		return false
+	end
+	
+	-- Show a notification with an image
+	local function showSuccessNotification()
+		StarterGui:SetCore("SendNotification", {
+			Title = "ACCESS GRANTED",
+			Text = "Welcome to Angel Bronx!",
+			Icon = "rbxassetid://78000615686315", -- Your image ID
+			Duration = 5, -- Notification duration (seconds)
+		})
+	end
+	
+	-- Remove the key system and show AngelBronx
+	local function grantAccess()
+		showSuccessNotification() -- Show notification first
+		KeySystemFrame.Visible = false
+		if AngelBronx then
+			AngelBronx.Visible = true
+		else
+			warn("AngelBronx frame not found!")
+		end
+	end
+	
+	-- Check Key button logic
+	CheckKeyButton.MouseButton1Click:Connect(function()
+		local key = KeyBox.Text:gsub("%s+", "") -- Remove spaces
+		if isValidKey(key) then
+			grantAccess()
+		else
+			KeyBox.Text = ""
+			KeyBox.PlaceholderText = "Invalid Key! Try Again."
+		end
+	end)
+	
+	-- Discord button logic (optional)
+	if DiscordButton then
+		DiscordButton.MouseButton1Click:Connect(function()
+			local discordInvite = "https://discord.gg/yourlink" -- Replace with your link
+			print("Join Discord: " .. discordInvite)
+			pcall(function()
+				StarterGui:SetCore("OpenBrowserWindow", {
+					URL = discordInvite
+				})
+			end)
+		end)
+	end
+end
+coroutine.wrap(CFZGE_fake_script)()
