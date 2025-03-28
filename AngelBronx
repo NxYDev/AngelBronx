@@ -112,7 +112,7 @@ TextLabel.TextWrapped = true
 
 -- Scripts
 
-local function OZWVIXY_fake_script() -- KeySystemFrame.LocalScript 
+local function QBBVR_fake_script() -- KeySystemFrame.LocalScript 
 	local script = Instance.new('LocalScript', KeySystemFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -155,87 +155,101 @@ local function OZWVIXY_fake_script() -- KeySystemFrame.LocalScript
 		end
 	end)
 end
-coroutine.wrap(OZWVIXY_fake_script)()
-local function CFZGE_fake_script() -- KeySystemFrame.LocalScript 
+coroutine.wrap(QBBVR_fake_script)()
+local function MQYBMD_fake_script() -- KeySystemFrame.LocalScript 
 	local script = Instance.new('LocalScript', KeySystemFrame)
 
 	local HttpService = game:GetService("HttpService")
 	local StarterGui = game:GetService("StarterGui")
 	local KeyBox = script.Parent.KeyFrame.KeyBox
-	local CheckKeyButton = script.Parent.KeyFrame["CheckKey Button"] -- Fixed name
-	local DiscordButton = script.Parent.KeyFrame["Discord Button"] -- Fixed name
+	local CheckKeyButton = script.Parent.KeyFrame["CheckKey Button"]
+	local DiscordButton = script.Parent.KeyFrame["Discord Button"]
 	local KeySystemFrame = script.Parent
 	local AngelBronx = script.Parent.Parent:FindFirstChild("AngelBronx")
 	
 	-- Keys URL
 	local KEYS_URL = "https://raw.githubusercontent.com/solarDev2/Key-System/refs/heads/main/keydiddyweowykeys"
 	
-	-- Fetch keys from GitHub
-	local function fetchKeys()
-		local success, keys = pcall(function()
-			return HttpService:GetAsync(KEYS_URL, true)
+	-- Cache for keys to avoid multiple HTTP requests
+	local validKeys = {}
+	local keysLoaded = false
+	
+	-- Improved key fetching with error handling
+	local function loadKeys()
+		if keysLoaded then return end
+	
+		local success, result = pcall(function()
+			local rawKeys = HttpService:GetAsync(KEYS_URL, true)
+			-- Split by lines and trim each line
+			for line in rawKeys:gmatch("[^\r\n]+") do
+				local cleanKey = line:match("^%s*(.-)%s*$") -- Trim whitespace
+				if #cleanKey > 0 then -- Only add non-empty keys
+					table.insert(validKeys, cleanKey)
+				end
+			end
+			keysLoaded = true
+			print("Successfully loaded", #validKeys, "keys")
 		end)
 	
-		if success then
-			local keyList = {}
-			for line in keys:gmatch("[^\r\n]+") do
-				table.insert(keyList, line:gsub("%s+", ""))
-			end
-			return keyList
-		else
-			warn("Failed to fetch keys: " .. keys)
-			return {}
+		if not success then
+			warn("Failed to load keys:", result)
+			-- You could add fallback keys here if needed
+			table.insert(validKeys, "DEFAULT_KEY_123") -- Example fallback
 		end
 	end
 	
-	-- Check if the entered key is valid
+	-- Case-insensitive key check with trimming
 	local function isValidKey(inputKey)
-		local keys = fetchKeys()
-		for _, key in pairs(keys) do
-			if key == inputKey then
+		if not keysLoaded then loadKeys() end
+	
+		local userKey = inputKey:match("^%s*(.-)%s*$"):lower() -- Trim and lowercase
+	
+		for _, validKey in ipairs(validKeys) do
+			if validKey:lower() == userKey then
 				return true
 			end
 		end
+	
 		return false
 	end
 	
-	-- Show a notification with an image
+	-- Notification function
 	local function showSuccessNotification()
 		StarterGui:SetCore("SendNotification", {
 			Title = "ACCESS GRANTED",
 			Text = "Welcome to Angel Bronx!",
-			Icon = "rbxassetid://78000615686315", -- Your image ID
-			Duration = 5, -- Notification duration (seconds)
+			Icon = "rbxassetid://78000615686315",
+			Duration = 5,
 		})
 	end
 	
-	-- Remove the key system and show AngelBronx
+	-- Grant access function
 	local function grantAccess()
-		showSuccessNotification() -- Show notification first
+		showSuccessNotification()
 		KeySystemFrame.Visible = false
 		if AngelBronx then
 			AngelBronx.Visible = true
 		else
-			warn("AngelBronx frame not found!")
+			warn("AngelBronx frame not found in parent")
 		end
 	end
 	
-	-- Check Key button logic
+	-- Check Key button
 	CheckKeyButton.MouseButton1Click:Connect(function()
-		local key = KeyBox.Text:gsub("%s+", "") -- Remove spaces
+		local key = KeyBox.Text
 		if isValidKey(key) then
 			grantAccess()
 		else
 			KeyBox.Text = ""
 			KeyBox.PlaceholderText = "Invalid Key! Try Again."
+			-- Optional: Play error sound
 		end
 	end)
 	
-	-- Discord button logic (optional)
+	-- Discord button
 	if DiscordButton then
 		DiscordButton.MouseButton1Click:Connect(function()
-			local discordInvite = "https://discord.gg/yourlink" -- Replace with your link
-			print("Join Discord: " .. discordInvite)
+			local discordInvite = "https://discord.gg/yourlink"
 			pcall(function()
 				StarterGui:SetCore("OpenBrowserWindow", {
 					URL = discordInvite
@@ -243,5 +257,8 @@ local function CFZGE_fake_script() -- KeySystemFrame.LocalScript
 			end)
 		end)
 	end
+	
+	-- Load keys when the frame first appears
+	loadKeys()
 end
-coroutine.wrap(CFZGE_fake_script)()
+coroutine.wrap(MQYBMD_fake_script)()
